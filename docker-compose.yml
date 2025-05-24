@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: mysql_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: blackboard_db # FastAPI 앱에서 사용할 데이터베이스 이름
+    ports:
+      - "3306:3306" # 외부에서 MySQL 접근 필요시 (개발용)
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost", "-uroot", "-p1234"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      
+  app:
+    build: .
+    container_name: fastapi_app
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy # db 서비스가 healthy 상태가 된 후 app 시작
+    environment:
+      # 여기서 DATABASE_URL은 docker-compose 내부 네트워크의 db 서비스를 가리켜야 합니다.
+      DATABASE_URL: "mysql+pymysql://root:1234@db:3306/blackboard_db"
+      SECRET_KEY: "your_very_secret_key_for_jwt_in_docker" # Docker 환경에 맞는 시크릿 키
+      GEMINI_API_KEY: "AIzaSyCDomj8Hvm_u1FOXJMkXywwe5N5PIy_Rp0" # Docker 환경에 맞는 Gemini API 키
+      ACCESS_TOKEN_EXPIRE_MINUTES: 30 
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+
+volumes:
+  mysql_data: 

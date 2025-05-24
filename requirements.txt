@@ -1,0 +1,14 @@
+fastapi
+uvicorn[standard]
+sqlalchemy
+pymysql
+google-generativeai
+langchain
+pydantic
+python-dotenv
+bcrypt
+passlib[bcrypt]
+python-jose[cryptography]
+sodium
+selenium
+webdriver-manager
