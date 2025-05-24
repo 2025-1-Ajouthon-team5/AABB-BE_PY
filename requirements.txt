@@ -11,4 +11,5 @@ bcrypt
 passlib[bcrypt]
 python-jose[cryptography]
 selenium
+pynacl
 webdriver-manager
