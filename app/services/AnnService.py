@@ -7,8 +7,6 @@ from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.common.exceptions import TimeoutException
 import os
-import json
-
 
 # id 비번 
 
@@ -162,7 +160,7 @@ def get_coursist(user_id, user_pw):
         print("[❌] 오류 발생:", e)
 
     finally:
-        driver.quit()
+        driver.quit() 
 
 def save_announcement_details(driver, course_id, announcement_ids, dto_list):
     base_url = "https://eclass2.ajou.ac.kr/ultra/courses/{}/announcements/announcement-detail?courseId={}&announcementId={}"

@@ -330,6 +330,7 @@ def get_task_dto_list(all_assignments):
         new_item = item.copy()
         new_item["due_date_obj"] = date_obj
         result.append(new_item)
-    return result
+        
+    return json.dumps(result, ensure_ascii=False, indent=4)
 
 ## 쓰는법 get_task_dto_list(get_pre_task_list("아이디", "비밀번호"))
