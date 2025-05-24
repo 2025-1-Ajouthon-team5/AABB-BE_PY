@@ -1,8 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Body
 from sqlalchemy.orm import Session
-
+import random
+from app.services.assgin_service import check_login
 from app import crud, schemas
 from app.database import get_db
+from app.services.assgin_service import check_login
 
 router = APIRouter()
 
@@ -52,3 +54,38 @@ async def delete_user_endpoint(
     # 성공적으로 삭제된 경우, 삭제된 사용자 정보를 반환합니다.
     # 혹은 간단한 성공 메시지를 반환할 수도 있습니다. 예: return {"message": "User deleted successfully"}
     return deleted_user
+
+@router.post("/login")
+async def login_user(
+    username: str = Body(..., embed=True),
+    password: str = Body(..., embed=True),
+    db: Session = Depends(get_db)
+):
+    """
+    로그인 성공 시 랜덤 long token 반환, 실패 시 401
+    """
+    if check_login(username, password):
+        token = random.randint(10**12, 10**18)
+        token = str(token)
+        
+        # 이미 user가 있으면 token만 업데이트, 없으면 새로 생성
+        db_user = crud.get_user(db, school_id=username)
+        user_create_data = schemas.UserCreate(
+            school_id=username,
+            school_password=password,
+            token=token
+        )
+        
+        print("user_create_data : ", user_create_data)
+        
+        if db_user:
+            crud.update_user_token(db=db, school_id=username, token=token)
+        else:
+            crud.create_user(db=db, user=user_create_data)
+        return {"token": token}
+    
+    else:
+        raise HTTPException(status_code=401, detail="로그인 실패")
+
+
+

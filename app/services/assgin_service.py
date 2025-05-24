@@ -163,7 +163,7 @@ def get_pre_task_list(user_id,user_pw):
                     print("[✅] '과제출제/제출' 폴더 버튼 클릭 완료")
                     
                     # 폴더 클릭 후 과제 링크가 나타날 때까지 잠시 대기
-                    WebDriverWait(driver, 5).until(
+                    WebDriverWait(driver, 1).until(
                         EC.presence_of_all_elements_located(
                             (By.XPATH, "//a[contains(@href, '/outline/assessment/')]")
                         )
@@ -177,7 +177,7 @@ def get_pre_task_list(user_id,user_pw):
                 detailed_assignments_list = []
                 try:
                     assignment_links_xpath = "//a[contains(@href, '/outline/assessment/') and @data-analytics-id='content.item.courses.outline.gradebook.item.assessment.readOnly.link']"
-                    assignment_links = WebDriverWait(driver, 10).until(
+                    assignment_links = WebDriverWait(driver, 2).until(
                         EC.visibility_of_all_elements_located((By.XPATH, assignment_links_xpath))
                     )
                     
@@ -226,7 +226,7 @@ def get_pre_task_list(user_id,user_pw):
                         driver.get(assignment_detail_url)
 
                         print(f"[ℹ️] '{assignment_title}' 상세 페이지 로드 후 2초 대기...")
-                        time.sleep(2)
+                        time.sleep(1)
 
                         try:
                             print(f"[⏳] '{assignment_title}' 상세 페이지에서 실제 콘텐츠 요소(id='bb-editorassignment-attempt-authoring-instructions') 대기 중...")
@@ -334,3 +334,36 @@ def get_task_dto_list(all_assignments):
     return json.dumps(result, ensure_ascii=False, indent=4)
 
 ## 쓰는법 get_task_dto_list(get_pre_task_list("아이디", "비밀번호"))
+
+
+def check_login(user_id, user_pw):
+    """
+    로그인 성공 여부만 반환 (True/False)
+    """
+    options = Options()
+    options.add_argument("--headless")
+    options.add_argument("--disable-gpu")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--window-size=1280,1024")
+
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+    try:
+        LOGIN_URL = "https://eclass2.ajou.ac.kr/ultra/course"
+        driver.get(LOGIN_URL)
+        wait = WebDriverWait(driver, 10)
+        user_id_field = wait.until(EC.presence_of_element_located((By.NAME, "userId")))
+        password_field = wait.until(EC.presence_of_element_located((By.NAME, "password")))
+        login_button = wait.until(EC.element_to_be_clickable((By.ID, "loginSubmit")))
+        user_id_field.send_keys(user_id)
+        password_field.send_keys(user_pw)
+        login_button.click()
+        # 로그인 성공 시 과목 카드가 나타남
+        try:
+            wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "article[data-course-id]")))
+            return True
+        except TimeoutException:
+            return False
+    except Exception:
+        return False
+    finally:
+        driver.quit()

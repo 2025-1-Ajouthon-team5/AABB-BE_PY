@@ -8,7 +8,8 @@ class User(Base):
     __tablename__ = "User"
 
     school_id = Column(String(255), primary_key=True, index=True)
-    school_password = Column(String(255), nullable=False)  # 해싱된 비밀번호 저장 예정
+    school_password = Column(String(255), nullable=False)  
+    token = Column(String(255), nullable=True) 
     created_at = Column(TIMESTAMP, server_default=func.now())
     updated_at = Column(TIMESTAMP, server_default=func.now(), onupdate=func.now())
 
