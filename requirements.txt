@@ -5,11 +5,11 @@ pymysql
 google-generativeai
 langchain
 pydantic
+pydantic-settings
 python-dotenv
 bcrypt
 passlib[bcrypt]
 python-jose[cryptography]
 selenium
-webdriver-manager
 pynacl
-pydantic-settings
+webdriver-manager

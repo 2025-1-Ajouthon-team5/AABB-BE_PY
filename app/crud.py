@@ -17,7 +17,7 @@ def get_user(db: Session, school_id: str):
 
 def create_user(db: Session, user: schemas.UserCreate):
     hashed_password = get_password_hash(user.school_password)
-    db_user = models.User(school_id=user.school_id, student_number=user.student_number, school_password=hashed_password)
+    db_user = models.User(school_id=user.school_id, school_password=hashed_password)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
