@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.v1.api import api_router
 from app.database import engine
@@ -16,16 +17,20 @@ app.include_router(api_router, prefix="/api/v1")
 async def root():
     return {"message": "Welcome to Blackboard Assignment Management API"}
 
-# CORS 설정 (필요한 경우)
-# from fastapi.middleware.cors import CORSMiddleware
-# origins = [
-#     "http://localhost",
-#     "http://localhost:3000", # 예시: 프론트엔드 개발 서버
-# ]
-# app.add_middleware(
-#     CORSMiddleware,
-#     allow_origins=origins,
-#     allow_credentials=True,
-#     allow_methods=["*"],
-#     allow_headers=["*"],
-# ) 
+# CORS 설정
+origins = [
+    "http://localhost", # localhost의 모든 포트 허용 (보안에 유의)
+    "http://localhost:3000", # React 기본 개발 포트
+    "http://localhost:8000", # Django/Flask 등 일부 기본 개발 포트
+    "http://localhost:8080", # Vue 등 일부 기본 개발 포트
+    # 필요한 경우 여기에 프론트엔드 애플리케이션의 실제 주소를 추가하세요.
+    # 예: "https://your-frontend-domain.com"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True, # 쿠키 등의 자격 증명을 허용할 경우 True
+    allow_methods=["*"],    # 모든 HTTP 메소드 허용
+    allow_headers=["*"],    # 모든 HTTP 헤더 허용
+) 
