@@ -32,7 +32,8 @@ async def register_user(
     # 1. User Database 생성 
     user_create_data = schemas.UserCreate(
         school_id=user_in.id,
-        school_password=user_in.password
+        school_password=user_in.password,
+        student_number=None  # student_number를 명시적으로 None으로 설정
     )
     created_user = crud.create_user(db=db, user=user_create_data)
 

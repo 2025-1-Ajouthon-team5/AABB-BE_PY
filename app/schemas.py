@@ -9,6 +9,7 @@ class UserBase(BaseModel):
 
 class UserCreate(UserBase):
     school_password: str = Field(..., max_length=255)
+    student_number: Optional[str] = None
 
 class User(UserBase):
     created_at: datetime
