@@ -23,6 +23,14 @@ def create_user(db: Session, user: schemas.UserCreate):
     db.refresh(db_user)
     return db_user
 
+def delete_user(db: Session, school_id: str):
+    db_user = get_user(db, school_id=school_id)
+    if db_user:
+        db.delete(db_user)
+        db.commit()
+        return db_user
+    return None
+
 # Task CRUD
 def get_tasks_by_user(db: Session, user_school_id: str, skip: int = 0, limit: int = 100):
     return db.query(models.Task).filter(models.Task.user_school_id == user_school_id).offset(skip).limit(limit).all()

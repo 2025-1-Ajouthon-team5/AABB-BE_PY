@@ -293,7 +293,6 @@ def get_pre_task_list(user_id,user_pw):
 
 
             print("[✅] 과목별 과제 상세 내용 처리 후 최종 자료구조 (assignments는 각 과제의 ID, 제목, 상세 내용을 포함):")
-            print(courses)
             all_assignments = []
             for course in courses:
                 for assignment in course.get("assignments", []):

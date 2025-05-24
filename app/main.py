@@ -19,12 +19,7 @@ async def root():
 
 # CORS 설정
 origins = [
-    "http://localhost", # localhost의 모든 포트 허용 (보안에 유의)
-    "http://localhost:3000", # React 기본 개발 포트
-    "http://localhost:8000", # Django/Flask 등 일부 기본 개발 포트
-    "http://localhost:8080", # Vue 등 일부 기본 개발 포트
-    # 필요한 경우 여기에 프론트엔드 애플리케이션의 실제 주소를 추가하세요.
-    # 예: "https://your-frontend-domain.com"
+    "*" # 모든 출처 허용 (개발용) 
 ]
 
 app.add_middleware(
