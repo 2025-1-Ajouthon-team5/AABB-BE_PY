@@ -113,16 +113,25 @@ def get_coursist(user_id, user_pw):
                     title = title_text.strip()
                 else:
                     title = "(제목 비어있음)"
+                    
             except Exception as e_title:
                 print(f"[debug] article 내에서 제목 요소 탐색 중 오류: {e_title}")
                 title = "(제목 요소 탐색 실패)"
 
             final_id = course_id if course_id and course_id.strip() else "(ID 없음)"
+            
             # 제목과 id가 유효할 때만 자료구조에 추가
             if title not in ["(제목 불명)", "(제목 비어있음)", "(제목 요소 탐색 실패)"] and final_id != "(ID 없음)":
                 courses.append({"title": title, "id": final_id})
                 print(f" - {title} (ID: {final_id})")
-
+                
+            else:
+                print(f" - {title} (ID: {final_id})", "제목이 비어있거나 유효하지 않음")
+            
+            # 코스에는 강의명과 아이디가 매칭되어 있다.     
+            aaa = courses.copy() 
+            
+            
         if not courses:
             print("[ℹ️] 유효한 과목 제목/ID를 가진 데이터가 없습니다.")
         else:
@@ -151,7 +160,7 @@ def get_coursist(user_id, user_pw):
                     print(f"[❌] 공지사항 id 추출 실패: {e}")
 
                 # 공지사항 상세 내용 저장 및 DTO 추가
-                save_announcement_details(driver, course["id"], announcement_ids, dto_list)
+                save_announcement_details(driver, course["id"], announcement_ids, dto_list, course["title"])
 
             print("[✅] 모든 공지 DTO 리스트(json):")
             return dto_list
@@ -162,7 +171,18 @@ def get_coursist(user_id, user_pw):
     finally:
         driver.quit() 
 
-def save_announcement_details(driver, course_id, announcement_ids, dto_list):
+def save_announcement_details(driver, course_id, announcement_ids, dto_list, course_title):
+        
+    '''
+    aaa 는 
+    [
+        {
+            "title": "강의명",
+            "id": "강의아이디"
+        }
+    ] 이때 강의아이디를 알고 있을때 title을 얻고싶다. 
+    '''
+    
     base_url = "https://eclass2.ajou.ac.kr/ultra/courses/{}/announcements/announcement-detail?courseId={}&announcementId={}"
     if not os.path.exists("announcements"):
         os.makedirs("announcements")
@@ -188,12 +208,12 @@ def save_announcement_details(driver, course_id, announcement_ids, dto_list):
                 "title": ann_title,
                 "detail": text,
                 "type": "공지",
-                "course_id": course_id
+                "course_id": course_id,
+                "course_title": course_title
             })
             print(f"[✅] DTO 저장 완료: {ann_title}")
         except Exception as e:
             print(f"[❌] {url}에서 공지사항 본문 추출 실패: {e}")
-
 
 # [{
 #     "title": "[중간과제 안내] - 1.프로젝트 참여 필수 // 2024년에 참여한 학생도 재신청해야 합니다(일부 학생이 수행하지 않아 재공지 드립니다) ~4/30(수)까지 신청",

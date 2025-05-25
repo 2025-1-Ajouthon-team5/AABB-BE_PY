@@ -3,24 +3,6 @@ from . import models, schemas
 from passlib.context import CryptContext
 from cryptography.fernet import Fernet
 
-# pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-# # 키는 환경변수나 .env 파일 등 안전한 곳에 저장하세요!
-# FERNET_KEY = b'your-generated-fernet-key-here'
-# fernet = Fernet(FERNET_KEY)
-
-# def encrypt_text(text: str) -> str:
-#     return fernet.encrypt(text.encode()).decode()
-
-# def decrypt_text(token: str) -> str:
-#     return fernet.decrypt(token.encode()).decode()
-
-# # Password Hashing
-# def verify_password(plain_password, hashed_password):
-#     return pwd_context.verify(plain_password, hashed_password)
-
-# def get_password_hash(password):
-#     return pwd_context.hash(password)
-
 # User CRUD
 def get_user(db: Session, school_id: str):
     return db.query(models.User).filter(models.User.school_id == school_id).first()
@@ -48,7 +30,17 @@ def delete_user(db: Session, school_id: str):
 def get_tasks_by_user(db: Session, user_school_id: str, skip: int = 0, limit: int = 100):
     return db.query(models.Task).filter(models.Task.user_school_id == user_school_id).offset(skip).limit(limit).all()
 
+# 중복 검증 : 기존 Task에서 type, course, date, user가 완전히 겹치는게 있는지 체크하기 
+def check_duplicate_task(db: Session, task: schemas.TaskCreate, user_school_id: str):
+    return db.query(models.Task).filter(
+        models.Task.user_school_id == user_school_id,
+        models.Task.type == task.type,
+        models.Task.course == task.course,
+        models.Task.due_date == task.due_date,
+    ).first()
+    
 def create_user_task(db: Session, task: schemas.TaskCreate, user_school_id: str):
+    
     db_task = models.Task(**task.dict(), user_school_id=user_school_id)
     db.add(db_task)
     db.commit()

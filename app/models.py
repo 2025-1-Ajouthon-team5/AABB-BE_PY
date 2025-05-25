@@ -42,6 +42,7 @@ class Task(Base):
     title = Column(String(255), nullable=False)
     detail = Column(Text, nullable=True)
     type = Column(Enum(TaskType), nullable=False)
+    course = Column(String(255), nullable=True)
     due_date = Column(DateTime, nullable=True)
     status = Column(Boolean, default=False, nullable=False)
     source_description = Column(Text, nullable=True)  # Gemini 분석 전 원본 공지 내용

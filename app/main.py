@@ -29,3 +29,7 @@ app.add_middleware(
     allow_methods=["*"],    # 모든 HTTP 메소드 허용
     allow_headers=["*"],    # 모든 HTTP 헤더 허용
 ) 
+
+# Access-Control-Allow-Origin: chrome-extension://[YOUR_EXTENSION_ID]
+# Access-Control-Allow-Methods: GET, POST
+# Access-Control-Allow-Headers: Content-Type, Authorization

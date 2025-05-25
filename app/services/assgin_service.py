@@ -139,6 +139,8 @@ def get_pre_task_list(user_id,user_pw):
             if title not in ["(제목 불명)", "(제목 비어있음)", "(제목 요소 탐색 실패)"] and final_id != "(ID 없음)":
                 courses.append({"title": title, "id": final_id})
                 print(f" - {title} (ID: {final_id})")
+                
+        aaa = courses.copy()
 
         if not courses:
             print("[ℹ️] 유효한 과목 제목/ID를 가진 데이터가 없습니다.")
@@ -248,7 +250,8 @@ def get_pre_task_list(user_id,user_pw):
                                 "type": "과제",
                                 "due_date": due_date,
                                 "status": "not yet",
-                                "course_id": current_course_id
+                                "course_id": current_course_id,
+                                "course_title": current_course_title
                             })
                             print(f"[📄] 과제 DTO 저장 (과목: {current_course_title}, 과제: {assignment_title}, ID: {assignment_id}, 마감일: {due_date})")
                         except TimeoutException:
@@ -260,7 +263,8 @@ def get_pre_task_list(user_id,user_pw):
                                 "type": "과제",
                                 "due_date": due_date,
                                 "status": "not yet",
-                                "course_id": current_course_id
+                                "course_id": current_course_id,
+                                "course_title": current_course_title
                             })
                         except Exception as e_detail:
                             error_message = f"Error: 상세 페이지 처리 중 오류 - {e_detail}"
@@ -270,7 +274,8 @@ def get_pre_task_list(user_id,user_pw):
                                 "type": "과제",
                                 "due_date": due_date,
                                 "status": "not yet",
-                                "course_id": current_course_id
+                                "course_id": current_course_id,
+                                "course_title": current_course_title
                             })
 
                     course["assignments"] = detailed_assignments_list

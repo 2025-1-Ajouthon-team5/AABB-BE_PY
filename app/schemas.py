@@ -45,6 +45,7 @@ class TaskBase(BaseModel):
     title: str = Field(..., max_length=255)
     detail: Optional[str] = None
     type: TaskType
+    course: str = None
     due_date: Optional[datetime] = None
     source_description: Optional[str] = None
 
@@ -95,4 +96,9 @@ class AnnouncementAnalysisResponse(BaseModel):
     original_response: Optional[str] = None # Gemini가 JSON 파싱 실패 시 원본 응답
 
     class Config:
-        orm_mode = True 
+        orm_mode = True
+
+# Chatbot Request Schema
+class ChatRequest(BaseModel):
+    token: str = Field(..., description="사용자 인증 토큰")
+    message: str = Field(..., min_length=1, description="사용자 질문 메시지") 
