@@ -57,7 +57,9 @@ async def handle_chat_request(
         )
         
     # 사용자의 모든 과제 정보 가져오기
-    user_tasks = crud.get_tasks_by_user(db=db, user_school_id=user.school_id, limit=100) # limit는 적절히 조절
+    user_tasks = crud.get_tasks_by_user(db=db, user_school_id=user.school_id, limit=20) # limit는 적절히 조절
+    
+    print(f"user_tasks: {user_tasks}")
     
     # 과제 정보를 문자열로 조합 (컨텍스트 생성)
     tasks_context_parts = []
