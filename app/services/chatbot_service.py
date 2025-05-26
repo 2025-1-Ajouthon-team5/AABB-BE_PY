@@ -1,12 +1,14 @@
 import google.generativeai as genai
 import json
 from app.config import settings
-
+from datetime import datetime
 # Configure the Gemini API key
 genai.configure(api_key=settings.GEMINI_API_KEY)
 
 # PRD에서 정의된 프롬프트를 기반으로 구성
 # 참고: PRD의 "// 추가 프롬프트 (예시)" 부분은 주석으로 처리되어 있어 실제 프롬프트 문자열로 변환했습니다.
+
+TODAY_DATE = datetime.now().strftime("%Y-%m-%d")
 
 ADDITIONAL_PROMPT = (
     
@@ -18,7 +20,7 @@ ADDITIONAL_PROMPT = (
     '"detail" : "공지사항의 추가 설명, 없으면 null",'
     '"status" : 200 / 404 # 200은 정상, 404는 잘못 요청한 경우'
     '"course" : 과목 제목 전달. 예 :  CLAW107_ 인권과 헌법(X508-1)' 
-    "} 공지사항 내용은 :"
+    "} 공지사항 내용은 :" 
 )
 
 DEFAULT_MODEL_NAME = "gemini-2.0-flash" 
@@ -64,6 +66,10 @@ async def analyze_announcement(announcement_text: str, model_name: str = DEFAULT
 
 # 기존 chat 함수를 사용자 질의응답용으로 수정
 async def chat(user_query: str, user_tasks_context: str, model_name: str = DEFAULT_MODEL_NAME) -> str:
+    
+    
+    print(f"user_tasks_context: {user_tasks_context}")
+    
     """
     사용자의 질문과 데이터베이스에서 가져온 과제 정보를 바탕으로 Gemini 모델에 질의하고,
     모델의 텍스트 응답을 반환합니다.
@@ -79,9 +85,10 @@ async def chat(user_query: str, user_tasks_context: str, model_name: str = DEFAU
 당신은 사용자 맞춤형 과제 일정 관리 및 답변을 제공하는 AI 어시스턴트입니다.
 사용자의 과제 목록은 다음과 같습니다:
 {user_tasks_context}
-
+오늘의 날짜는 {TODAY_DATE} 인것에 유의하여 남은 기간의 과제만 요약해주세요.
 위 과제 목록을 참고하여 다음 사용자의 질문에 대해 친절하고 상세하게 답변해주세요:
 {user_query}
+가능하다면 글자수는 200자 이하로 제한해주세요. 
 """
     
     try:

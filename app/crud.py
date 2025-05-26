@@ -23,12 +23,13 @@ def delete_user(db: Session, school_id: str):
     if db_user:
         db.delete(db_user)
         db.commit()
-        return db_user
+        return db_user 
     return None
 
 # Task CRUD
 def get_tasks_by_user(db: Session, user_school_id: str, skip: int = 0, limit: int = 100):
-    return db.query(models.Task).filter(models.Task.user_school_id == user_school_id).offset(skip).limit(limit).all()
+    # 이때 과제는 마감기한 기준으로 오름차순 정렬한다. 
+    return db.query(models.Task).filter(models.Task.user_school_id == user_school_id).order_by(models.Task.due_date.asc()).offset(skip).limit(limit).all()
 
 # 중복 검증 : 기존 Task에서 type, course, date, user가 완전히 겹치는게 있는지 체크하기 
 def check_duplicate_task(db: Session, task: schemas.TaskCreate, user_school_id: str):
